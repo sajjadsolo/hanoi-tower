@@ -4,18 +4,23 @@ SRCS := hanoi.c
 OBJS := $(SRCS:.c=.o)
 TARGET = build
 
+
 .PHONY: all clean
+
 
 all: $(TARGET)
 
-run:
+
+run: all
 	./$(TARGET)
 
 %.c: %.o
 	$(CC) $(CFLAGS) -c $< -o $@
 
+
 $(TARGET): $(OBJS)
 	$(CC) $^ -o $(TARGET)
+
 
 clean:
 	rm -f $(OBJS) $(TARGET)
