@@ -52,6 +52,11 @@ printtowers() {
 
     moves++;
     printf("\033[%dAMove: %d\n", MAXRINGS + 7, moves);
+        for (int k = 0; k < MAXRINGS; k++) {
+        tempa[k] = a[k];
+        tempb[k] = b[k];
+        tempc[k] = c[k];
+    }
     ascending(tempa, MAXRINGS);
     ascending(tempb, MAXRINGS);
     ascending(tempc, MAXRINGS);
@@ -119,9 +124,7 @@ main() {
         c[i] = ' ';
     }
     
-    ascending(a, MAXRINGS);
-    ascending(b, MAXRINGS);
-    ascending(c, MAXRINGS);
+   
 
     printf("\033c");
     move(MAXRINGS, a, c, b);
