@@ -24,9 +24,7 @@ ascending(char *arr, int length) {
     
     for (i = 0; i < length; i++) {
         for (j = i + 1; j < length; j++) {
-            // Compare the elements based on whether they are empty cells or numbers
             if (arr[i] == ' ' && arr[j] != ' ') {
-                // Swap the elements if the current element is an empty cell and the next element is a number
                 temp = arr[i];
                 arr[i] = arr[j];
                 arr[j] = temp;
@@ -36,7 +34,8 @@ ascending(char *arr, int length) {
 }
 
 
-char getcell(char *t, int i) {
+char 
+getcell(char *t, int i) {
     if (i >= 1 && i <= MAXRINGS) {
         return t[i - 1];
     }
@@ -53,7 +52,6 @@ printtowers() {
 
     moves++;
     printf("\033[%dAMove: %d\n", MAXRINGS + 7, moves);
-
     ascending(tempa, MAXRINGS);
     ascending(tempb, MAXRINGS);
     ascending(tempc, MAXRINGS);
@@ -90,7 +88,8 @@ printtowers() {
 }
 
 
-void move(int n, char *ta, char *tb, char *tc) {
+void 
+move(int n, char *ta, char *tb, char *tc) {
     int nextindex = (MAXRINGS - n) + 1;
     int length = sizeof(ta) / sizeof(ta[0]);
 
@@ -110,7 +109,8 @@ void move(int n, char *ta, char *tb, char *tc) {
 }
 
 
-int main() {
+int 
+main() {
     int length = sizeof(a) / sizeof(a[0]);
     
     for (int i = 0; i < MAXRINGS; i++) {
@@ -119,7 +119,7 @@ int main() {
         c[i] = ' ';
     }
     
-     ascending(a, MAXRINGS);
+    ascending(a, MAXRINGS);
     ascending(b, MAXRINGS);
     ascending(c, MAXRINGS);
 
