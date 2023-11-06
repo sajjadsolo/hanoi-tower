@@ -1,119 +1,131 @@
- // Copyright 2023 Sajjad Argahvani
- /*
-  *  This file is for displaying Hanoi towers in C language
-  *  Author: Sajjad Arghavani <sajjad.arghavani@gmail.com>
-  */
+// Copyright 2023 Sajjad Arghavani
+/*
+* This file is for displaying Hanoi towers in C language
+* Author: Sajjad Arghavani <sajjad.arghavani@gmail.com>
+*/
 #include <stdio.h>
 #include <unistd.h>
+#include <stdbool.h>
 
-#define DELAY 30000
+
+#define DELAY 190000
 #define MAXRINGS 6
 #define SPACER 6
 
 
-int a[MAXRINGS], b[MAXRINGS], c[MAXRINGS];
+char a[MAXRINGS], b[MAXRINGS], c[MAXRINGS];
 int moves = 0;
 
 
-int getcell(int t[], int i) {
-    if (i <= MAXRINGS) {
-        return t[i - 1];
+void 
+ascending(char *arr, int length) {
+    int i, j;
+    char temp;
+    
+    for (i = 0; i < length; i++) {
+        for (j = i + 1; j < length; j++) {
+            // Compare the elements based on whether they are empty cells or numbers
+            if (arr[i] == ' ' && arr[j] != ' ') {
+                // Swap the elements if the current element is an empty cell and the next element is a number
+                temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
     }
-    return -1;
 }
 
 
-void print_towers_char() {
-    int i = MAXRINGS + 1;
+char getcell(char *t, int i) {
+    if (i >= 1 && i <= MAXRINGS) {
+        return t[i - 1];
+    }
+
+    return ' ';
+}
+
+
+void 
+printtowers() {
+    int j;
+    int i = MAXRINGS;
+    char tempa[MAXRINGS], tempb[MAXRINGS], tempc[MAXRINGS];
+
     moves++;
     printf("\033[%dAMove: %d\n", MAXRINGS + 7, moves);
 
+    ascending(tempa, MAXRINGS);
+    ascending(tempb, MAXRINGS);
+    ascending(tempc, MAXRINGS);
+    int maxHeight = i;
+    if (i < MAXRINGS) {
+        maxHeight = MAXRINGS;
+    }
+
     while (i > 0) {
-        int cell_a = getcell(a, i);
-        int cell_b = getcell(b, i);
-        int cell_c = getcell(c, i);
+        char cella = getcell(tempa, i);
+        char cellb = getcell(tempb, i);
+        char cellc = getcell(tempc, i);
+        
+        if (cella == ' ') {
+            cella = '|';
+        }
+        if (cellb == ' ') {
+            cellb = '|';
+        }
+        if (cellc == ' ') {
+            cellc = '|';
+        }
 
-        char char_a = (cell_a == -1) ? '|' : cell_a + '0';
-        char char_b = (cell_b == -1) ? '|' : cell_b + '0';
-        char char_c = (cell_c == -1) ? '|' : cell_c + '0';
-
-        printf("%*c%*c%*c\n", SPACER, char_a, SPACER, char_b, SPACER, char_c);
+        printf("%*c%*c%*c\n", SPACER, cella, SPACER, cellb, SPACER, cellc);
         i--;
     }
 
-    for (int j = 0; j < SPACER * 2 + 3 * MAXRINGS; j++) {
+    for (j = 0; j < SPACER * 2 + 3 * maxHeight; j++) {
         printf("-");
     }
+
     printf("\n");
     printf("%*c%*c%*c\n\n", SPACER, 'A', SPACER, 'B', SPACER, 'C');
 }
 
 
-void move(int n, int *ta, int *tb, int *tc) {
-    usleep(DELAY);
+void move(int n, char *ta, char *tb, char *tc) {
+    int nextindex = (MAXRINGS - n) + 1;
+    int length = sizeof(ta) / sizeof(ta[0]);
 
+    usleep(100000);
     if (n == 1) {
-        int empty_index = -1;
-        for (int i = 0; i < MAXRINGS; i++) {
-            if (tb[i] == -1) {
-                empty_index = i;
-                break;
-            }
-        }
-        tb[empty_index] = ta[n - 1];
-        ta[n - 1] = -1;
-        print_towers_char();
+        tb[MAXRINGS - n] = ta[MAXRINGS - n];
+        ta[MAXRINGS - n] = ' ';
+        printtowers();
         return;
     }
 
-    move(n - 1, ta, tc, tb);
-    int empty_index = -1;
-    for (int i = 0; i < MAXRINGS; i++) {
-        if (tb[i] == -1) {
-            empty_index = i;
-            break;
-        }
-    }
-    int moved_ring = ta[n - 1];
-    int temp_index = empty_index;
-
-    while (temp_index > 0 && tb[temp_index - 1] > moved_ring) {
-        tb[temp_index] = tb[temp_index - 1];
-        temp_index--;
-    }
-    tb[temp_index] = moved_ring;
-    ta[n - 1] = -1;
-    print_towers_char();
+    move(n - 1, ta, tc, tb); 
+    tb[MAXRINGS - n] = ta[MAXRINGS - n];
+    ta[MAXRINGS - n] = ' ';
+    printtowers();
     move(n - 1, tc, tb, ta);
 }
 
 
-void sort_tower_c() {
-    for (int i = 0; i < MAXRINGS - 1; i++) {
-        for (int j = 0; j < MAXRINGS - i - 1; j++) {
-            if (c[j] < c[j + 1]) {
-                int temp = c[j];
-                c[j] = c[j + 1];
-                c[j + 1] = temp;
-            }
-        }
-    }
-}
-
-
 int main() {
+    int length = sizeof(a) / sizeof(a[0]);
+    
     for (int i = 0; i < MAXRINGS; i++) {
-        a[i] = MAXRINGS - i;
-        b[i] = -1;
-        c[i] = -1;
+        a[i] = MAXRINGS - i + '0';
+        b[i] = ' ';
+        c[i] = ' ';
     }
+    
+     ascending(a, MAXRINGS);
+    ascending(b, MAXRINGS);
+    ascending(c, MAXRINGS);
 
     printf("\033c");
-    print_towers_char();
     move(MAXRINGS, a, c, b);
-    sort_tower_c();
-    moves--; 
-    print_towers_char();
+    printtowers();
 
     return 0;
 }
