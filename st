@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-#define DELAY 290000
+#define DELAY 29000
 #define MAXRINGS 6
 #define SPACER 6
 
@@ -11,25 +11,28 @@ typedef struct {
     int top;
 } Stack;
 
-void initStack(Stack* s) {
+void 
+initStack(Stack* s) {
     s->top = -1;
 }
 
-bool isStackEmpty(Stack* s) {
+bool 
+isStackEmpty(Stack* s) {
     return (s->top == -1);
 }
 
-bool isStackFull(Stack* s) {
+bool 
+isStackFull(Stack* s) {
     return (s->top == MAXRINGS - 1);
 }
 
-void push(Stack* s, int value) {
+void 
+push(Stack* s, int value) {
     if (isStackFull(s)) {
         printf("Stack overflow\n");
         return;
     }
 
-    // Find the index where the big number should be inserted
     int index = s->top + 1;
     while (index > 0 && s->stack[index - 1] > value) {
         s->stack[index] = s->stack[index - 1];
@@ -40,7 +43,8 @@ void push(Stack* s, int value) {
     s->top++;
 }
 
-int pop(Stack* s) {
+int 
+pop(Stack* s) {
     if (isStackEmpty(s)) {
         printf("Stack underflow\n");
         return -1;
@@ -49,7 +53,8 @@ int pop(Stack* s) {
     return s->stack[s->top--];
 }
 
-int getTop(Stack* s) {
+int 
+getTop(Stack* s) {
     if (isStackEmpty(s)) {
         printf("Stack is empty\n");
         return -1;
@@ -58,7 +63,8 @@ int getTop(Stack* s) {
     return s->stack[s->top];
 }
 
-void printStack(Stack* s) {
+void 
+printStack(Stack* s) {
     Stack tempStack;
     initStack(&tempStack);
 
@@ -73,7 +79,8 @@ void printStack(Stack* s) {
     }
 }
 
-void printtowers(Stack* stackA, Stack* stackB, Stack* stackC, int moves) {
+void 
+printtowers(Stack* stackA, Stack* stackB, Stack* stackC, int moves) {
     int j;
     int i = MAXRINGS;
 
@@ -97,7 +104,8 @@ void printtowers(Stack* stackA, Stack* stackB, Stack* stackC, int moves) {
     printf("%*c%*c%*c\n\n", SPACER, 'A', SPACER, 'B', SPACER, 'C');
 }
 
-void move(int n, Stack* stackA, Stack* stackB, Stack* stackC, int* moves) {
+void 
+move(int n, Stack* stackA, Stack* stackB, Stack* stackC, int* moves) {
     usleep(DELAY);
     if (n == 1) {
         push(stackB, pop(stackA));
@@ -111,7 +119,8 @@ void move(int n, Stack* stackA, Stack* stackB, Stack* stackC, int* moves) {
     move(n - 1, stackC, stackB, stackA, moves);
 }
 
-int main() {
+int 
+main() {
     Stack stackA, stackB, stackC;
     int moves = 0;
 
