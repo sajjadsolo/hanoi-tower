@@ -1,8 +1,3 @@
-// Copyright 2023 Sajjad Arghavani
-/*
-* This file is for displaying Hanoi towers in C language
-* Author: Sajjad Arghavani <sajjad.arghavani@gmail.com>
-*/
 #include <stdio.h>
 #include <unistd.h>
 #include <stdbool.h>
@@ -34,7 +29,15 @@ void push(Stack* s, int value) {
         return;
     }
 
-    s->stack[++s->top] = value;
+    // Find the index where the big number should be inserted
+    int index = s->top + 1;
+    while (index > 0 && s->stack[index - 1] > value) {
+        s->stack[index] = s->stack[index - 1];
+        index--;
+    }
+
+    s->stack[index] = value;
+    s->top++;
 }
 
 int pop(Stack* s) {
@@ -116,8 +119,8 @@ int main() {
     initStack(&stackB);
     initStack(&stackC);
 
-    for (int i = 0; i < MAXRINGS; i++) {
-        push(&stackA, MAXRINGS - i);
+    for (int i = MAXRINGS; i >= 1; i--) {
+        push(&stackA, i);
     }
 
     printf("\033c");
