@@ -1,39 +1,51 @@
+// Copyright 2023 Sajjad Arghavani
+/*
+* This file is for displaying Hanoi towers in C language
+* Author: Sajjad Arghavani <sajjad.arghavani@gmail.com>
+*/
 #include <stdio.h>
 #include <unistd.h>
 #include <stdbool.h>
 
-#define DELAY 29000
+
+#define DELAY 200000
 #define MAXRINGS 6
 #define SPACER 6
+
 
 typedef struct {
     int stack[MAXRINGS];
     int top;
-} Stack;
+}stacks;
 
-void 
-initStack(Stack* s) {
+
+void
+initstack(stacks* s) {
     s->top = -1;
 }
 
-bool 
-isStackEmpty(Stack* s) {
+
+bool
+isstackempty(stacks* s) {
     return (s->top == -1);
 }
 
-bool 
-isStackFull(Stack* s) {
+
+bool
+isstackfull(stacks* s) {
     return (s->top == MAXRINGS - 1);
 }
 
-void 
-push(Stack* s, int value) {
-    if (isStackFull(s)) {
-        printf("Stack overflow\n");
+
+void
+push(stacks* s, int value) {
+    int index = s->top + 1;
+
+    if (isstackfull(s)) {
+        printf("Stack is full\n");
         return;
     }
 
-    int index = s->top + 1;
     while (index > 0 && s->stack[index - 1] > value) {
         s->stack[index] = s->stack[index - 1];
         index--;
@@ -43,58 +55,36 @@ push(Stack* s, int value) {
     s->top++;
 }
 
-int 
-pop(Stack* s) {
-    if (isStackEmpty(s)) {
-        printf("Stack underflow\n");
+
+int
+pop(stacks* s) {
+    if (isstackempty(s)) {
+        printf("Stack is empty\n");
         return -1;
     }
 
     return s->stack[s->top--];
 }
 
-int 
-getTop(Stack* s) {
-    if (isStackEmpty(s)) {
-        printf("Stack is empty\n");
-        return -1;
-    }
 
-    return s->stack[s->top];
-}
-
-void 
-printStack(Stack* s) {
-    Stack tempStack;
-    initStack(&tempStack);
-
-    while (!isStackEmpty(s)) {
-        int value = pop(s);
-        printf("%*d\n", SPACER, value);
-        push(&tempStack, value);
-    }
-
-    while (!isStackEmpty(&tempStack)) {
-        push(s, pop(&tempStack));
-    }
-}
-
-void 
-printtowers(Stack* stackA, Stack* stackB, Stack* stackC, int moves) {
+void
+printtowers(stacks* stacka, stacks* stackb, stacks* stackc, int moves) {
     int j;
-    int i = MAXRINGS;
+    int i = MAXRINGS - 1;
 
     moves++;
     printf("\033[%dAMove: %d\n", MAXRINGS + 7, moves);
 
-    while (i > 0) {
-        int cella = (i <= stackA->top + 1) ? stackA->stack[stackA->top - i + 1] : 0;
-        int cellb = (i <= stackB->top + 1) ? stackB->stack[stackB->top - i + 1] : 0;
-        int cellc = (i <= stackC->top + 1) ? stackC->stack[stackC->top - i + 1] : 0;
+while (i > 0) {
+    int cella = (i <= stacka->top) ? stacka->stack[stacka->top - (i)] : 0;
+    int cellb = (i <= stackb->top) ? stackb->stack[stackb->top - (i)] : 0;
+    int cellc = (i <= stackc->top) ? stackc->stack[stackc->top - (i)] : 0;
+    
 
-        printf("%*d%*d%*d\n", SPACER, cella, SPACER, cellb, SPACER, cellc);
-        i--;
-    }
+
+    printf("%*d%*d%*d\n", SPACER, cella, SPACER, cellb, SPACER, cellc);
+    i--;
+}
 
     for (j = 0; j < SPACER * 2 + 3 * MAXRINGS; j++) {
         printf("-");
@@ -104,37 +94,38 @@ printtowers(Stack* stackA, Stack* stackB, Stack* stackC, int moves) {
     printf("%*c%*c%*c\n\n", SPACER, 'A', SPACER, 'B', SPACER, 'C');
 }
 
-void 
-move(int n, Stack* stackA, Stack* stackB, Stack* stackC, int* moves) {
+
+void
+move(int n, stacks* stacka, stacks* stackb, stacks* stackc, int* moves) {
     usleep(DELAY);
     if (n == 1) {
-        push(stackB, pop(stackA));
-        printtowers(stackA, stackB, stackC, (*moves)++);
+        push(stackb, pop(stacka));
+        printtowers(stacka, stackb, stackc, (*moves)++);
         return;
     }
 
-    move(n - 1, stackA, stackC, stackB, moves);
-    push(stackB, pop(stackA));
-    printtowers(stackA, stackB, stackC, (*moves)++);
-    move(n - 1, stackC, stackB, stackA, moves);
+    move(n - 1, stacka, stackc, stackb, moves);
+    push(stackb, pop(stacka));
+    printtowers(stacka, stackb, stackc, (*moves)++);
+    move(n - 1, stackc, stackb, stacka, moves);
 }
 
-int 
+
+int
 main() {
-    Stack stackA, stackB, stackC;
     int moves = 0;
+    stacks stacka, stackb, stackc;
 
-    initStack(&stackA);
-    initStack(&stackB);
-    initStack(&stackC);
-
+    initstack(&stacka);
+    initstack(&stackb);
+    initstack(&stackc);
     for (int i = MAXRINGS; i >= 1; i--) {
-        push(&stackA, i);
+        push(&stacka, i);
     }
 
     printf("\033c");
-    move(MAXRINGS, &stackA, &stackC, &stackB, &moves);
-    printtowers(&stackA, &stackB, &stackC, moves);
+    move(MAXRINGS, &stacka, &stackc, &stackb, &moves);
+    printtowers(&stacka, &stackb, &stackc, moves);
 
     return 0;
 }
